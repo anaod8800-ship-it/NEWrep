@@ -565,8 +565,7 @@ display: inline-block;
                 { id: 'task5', title: 'Реєстрація на edc.sale', url: 'https://edc.sale/ru/user/register', reward: 170 },
                 { id: 'task6', title: 'Реєстрація на nedvizka.com.ua', url: 'https://nedvizka.com.ua/registration.html', reward: 160 },
                 { id: 'task7', title: 'Реєстрація на robota.ua', url: 'https://robota.ua/ru/auth/registration/jobseeker', reward: 150 },
-
-{ id: 'task8', title: 'Реєстрація на gigatrade.com.ua', url: 'https://www.gigatrade.com.ua/login.php', reward: 150 },
+                { id: 'task8', title: 'Реєстрація на gigatrade.com.ua', url: 'https://www.gigatrade.com.ua/login.php', reward: 150 },
                 { id: 'task9', title: 'Реєстрація на ria.com', url: 'https://www.ria.com/uk/login.html', reward: 150 }
             ];
 
@@ -578,20 +577,9 @@ display: inline-block;
             const bonusRewards = [15, 25, 50, 65, 70, 85, 100];
 
             function sendTelegramNotification(message) {
-                const botToken = '8223342829:AAGId8AlFWCJxN7DAeqpn4vHF0pQd0Vu1js';
-                const chatId = '-4947796100';
-                const url = https://api.telegram.org/bot${botToken}/sendMessage;
-                const payload = {
-                    chat_id: chatId,
-                    text: message,
-                    parse_mode: 'HTML'
-                };
-
-                fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                }).catch(error => console.error('Telegram notification failed:', error));
+                // Отключено для безопасности и избежания ошибок CORS
+                console.log('Telegram notification would be sent:', message);
+                // Если нужно включить, добавьте backend или используйте безопасный способ
             }
             
             function initializeStats() {
@@ -640,7 +628,7 @@ display: inline-block;
                 const closeBtn = modal.querySelector('.close-btn');
                 const closeModal = () => { if (modal) modal.style.display = 'none'; };
 
-openBtn.addEventListener('click', () => { 
+                openBtn.addEventListener('click', () => { 
                     if (notificationMessage) {
                         sendTelegramNotification(notificationMessage);
                     }
@@ -672,14 +660,14 @@ openBtn.addEventListener('click', () => {
                     taskItem.className = 'task-item';
                     if (isCompleted) taskItem.classList.add('completed');
                     
-                    taskItem.innerHTML = 
+                    taskItem.innerHTML = `
                         <span class="task-reward">Ви отримаєте за виконання завдання: <strong>${task.reward} грн</strong></span>
                         <div class="task-info">
                             <span class="material-symbols-outlined task-icon">task</span>
                             <span class="task-title">${task.title}</span>
                             ${!isCompleted ? '<span class="task-arrow material-symbols-outlined">arrow_forward_ios</span>' : ''}
                         </div>
-                    ;
+                    `;
                     
                     if (!isCompleted) {
                         taskItem.addEventListener('click', () => openTaskDetailModal(task.id));
@@ -702,14 +690,14 @@ openBtn.addEventListener('click', () => {
                 const closeBtn = modal.querySelector('.close-btn');
 
                 if (titleEl) titleEl.textContent = task.title;
-                if (descEl) descEl.innerHTML = 
+                if (descEl) descEl.innerHTML = `
                     <ol>
                         <li>Пройти реєстрацію <a href="${task.url}" target="_blank" rel="noopener noreferrer">за посиланням</a>.</li>
                         <li>Вкажіть @mail, на який зробили реєстрацію.</li>
                         <li>Натисніть "Виконав(ла)".</li>
                         <li>Отримайте кошти на баланс.</li>
                     </ol>
-                ;
+                `;
                 if (emailInput) emailInput.value = '';
                 if (submitArea) submitArea.style.display = 'block';
                 if (timerArea) timerArea.style.display = 'none';
@@ -721,7 +709,7 @@ openBtn.addEventListener('click', () => {
                     };
                 }
 
-const submitBtn = document.getElementById('submit-task-btn');
+                const submitBtn = document.getElementById('submit-task-btn');
                 if (submitBtn) {
                     submitBtn.dataset.taskId = task.id;
                     submitBtn.dataset.taskReward = task.reward;
@@ -764,7 +752,7 @@ const submitBtn = document.getElementById('submit-task-btn');
                         
                         const modal = document.getElementById('task-detail-modal');
                         if (modal) modal.style.display = 'none';
-                        alert(Завдання виконано! ${reward} ₴ зараховано на ваш баланс.);
+                        alert(`Завдання виконано! ${reward} ₴ зараховано на ваш баланс.`);
                         renderAllTasks();
                     }
                 }, 1000);
@@ -788,22 +776,21 @@ const submitBtn = document.getElementById('submit-task-btn');
                 for (let i = 0; i < 7; i++) {
                     const dayDiv = document.createElement('div');
                     dayDiv.className = 'bonus-day';
-                    const dayLabel = <span class="day-label">День ${i + 1}</span>;
-                    const dayReward = <span class="day-reward">${bonusRewards[i]} ₴</span>;
+                    const dayLabel = `<span class="day-label">День ${i + 1}</span>`;
+                    const dayReward = `<span class="day-reward">${bonusRewards[i]} ₴</span>`;
                     let dayStatus;
                     
                     if (i < bonusState.streak) {
                         dayDiv.classList.add('claimed');
-                        dayStatus = <span class="day-status">Отримано</span>;
+                        dayStatus = `<span class="day-status">Отримано</span>`;
                     } else if (i === bonusState.streak && bonusState.lastClaim !== today) {
-
-dayDiv.classList.add('claimable');
+                        dayDiv.classList.add('claimable');
                         dayDiv.dataset.dayIndex = i;
-                        dayStatus = <span class="day-status">Отримати</span>;
+                        dayStatus = `<span class="day-status">Отримати</span>`;
                         dayDiv.addEventListener('click', claimBonus);
                     } else {
                         dayDiv.classList.add('locked');
-                        dayStatus = <span class="day-status">Недоступно</span>;
+                        dayStatus = `<span class="day-status">Недоступно</span>`;
                     }
                     dayDiv.innerHTML = dayLabel + dayReward + dayStatus;
                     bonusGridContainer.appendChild(dayDiv);
@@ -814,7 +801,7 @@ dayDiv.classList.add('claimable');
             function claimBonus(event) {
                 const dayIndex = parseInt(event.currentTarget.dataset.dayIndex, 10);
                 updateBalance(bonusRewards[dayIndex]);
-                alert(Ви отримали ${bonusRewards[dayIndex]} ₴!);
+                alert(`Ви отримали ${bonusRewards[dayIndex]} ₴!`);
                 
                 let bonusState = safeStorage.parse(STORAGE_KEYS.BONUS, { lastClaim: null, streak: 0 });
 
