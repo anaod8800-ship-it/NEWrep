@@ -76,8 +76,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             animation: gradient-animation 4s linear infinite;
-
-}
+        }
         .withdraw-button:hover { transform: scale(1.05); }
         main { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-between; width: 100%; }
         .stats-container { display: flex; justify-content: space-around; width: 100%; max-width: 500px; margin-top: 1.5rem; }
@@ -160,8 +159,7 @@
         .start-earning-btn:hover { transform: scale(1.05); }
         .tasks-section { width: 100%; max-width: 500px; margin-top: 1.25rem; margin-bottom: 1.25rem; }
         .tasks-title { text-align: center; font-size: 1.375rem; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1.25rem; }
-
-.tasks-container { display: flex; flex-direction: column; gap: 1rem; }
+        .tasks-container { display: flex; flex-direction: column; gap: 1rem; }
         .task-item {
             background-color: var(--bg-dark-2);
             border: 1px solid #444;
@@ -268,8 +266,7 @@
             color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.3s ease;
-
-}
+        }
         .close-btn:hover { color: var(--accent-cyan); transform: rotate(90deg); }
         .modal-content p { margin: 1rem 0 0.625rem; font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
         #amount-input {
@@ -350,14 +347,13 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 1rem;
-
-display: inline-block;
+            display: inline-block;
             width: 100%;
             box-sizing: border-box;
         }
         .modal-button:hover { transform: scale(1.02); }
         .timer-text { font-size: 1.5rem; font-weight: 700; color: var(--accent-pink); margin: 1.25rem; }
-        #tasks-list-modal .modal-content, #bonus-modal .modal-content, #about-modal .modal-content, #task-detail-modal .modal-content {
+        #tasks-list-modal .modal-content, #reviews-modal .modal-content, #about-modal .modal-content, #task-detail-modal .modal-content {
             max-height: 85vh;
             display: flex;
             flex-direction: column;
@@ -367,25 +363,20 @@ display: inline-block;
         #tasks-list-modal .tasks-container { padding-bottom: 20px; }
         #no-top-tasks-msg { display: none; color: var(--text-secondary); text-align: center; margin-top: 20px; font-family: var(--font-secondary); }
         #about-modal p { text-align: left; line-height: 1.7; text-transform: none; }
-        .bonus-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 1rem; margin-top: 1.25rem; }
-        .bonus-day {
+        .reviews-container { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.25rem; overflow-y: auto; max-height: 60vh; }
+        .review-item {
             background: var(--bg-dark-1);
             border: 1px solid #444;
             border-radius: 12px;
             padding: 1rem;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            align-items: flex-start;
             transition: all 0.3s ease;
         }
-        .bonus-day .day-label { font-size: 0.75rem; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; }
-        .bonus-day .day-reward { font-size: 1.125rem; font-weight: 700; color: var(--accent-cyan); margin: 0.625rem 0; }
-        .bonus-day .day-status { font-size: 0.875rem; font-weight: 700; font-family: var(--font-secondary); }
-        .bonus-day.claimable { border-color: var(--accent-cyan); cursor: pointer; }
-        .bonus-day.claimable:hover { transform: scale(1.05); }
-        .bonus-day.claimed { filter: grayscale(80%) brightness(0.7); }
-        .bonus-day.locked { filter: brightness(0.5); }
+        .review-item:hover { border-color: var(--accent-cyan); }
+        .review-author { font-size: 0.9rem; font-weight: 700; color: var(--accent-cyan); margin-bottom: 0.5rem; }
+        .review-text { font-family: var(--font-secondary); font-size: 0.95rem; color: var(--text-light); line-height: 1.5; }
         @media (max-width: 480px) {
             .header { padding: 0.75rem 0; }
             .logo-title { gap: 0.75rem; }
@@ -396,6 +387,8 @@ display: inline-block;
             .stat-value { font-size: 1.25rem; }
             #task-modal-content h3 { font-size: 1.1rem; }
             #task-modal-content p { font-size: 0.85rem; }
+            .review-author { font-size: 0.85rem; }
+            .review-text { font-size: 0.9rem; }
         }
         @media (max-width: 360px) {
             .header { padding: 0.5rem 0; }
@@ -405,6 +398,8 @@ display: inline-block;
             .withdraw-button { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
             .balance { font-size: 0.9rem; }
             .task-reward { font-size: 0.8rem; }
+            .review-author { font-size: 0.8rem; }
+            .review-text { font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -434,8 +429,7 @@ display: inline-block;
         </div>
 
         <div class="earning-section">
-
-<p class="earning-promo-text">
+            <p class="earning-promo-text">
                 Почни заробляти від 800 до 1500 грн в день:<br>
                 - без вкладень<br>
                 - виконуй прості завдання<br>
@@ -452,7 +446,7 @@ display: inline-block;
     <nav class="bottom-nav">
         <button class="nav-button active"><span class="material-symbols-outlined">hub</span><span>Головна</span></button>
         <button class="nav-button" id="open-tasks-list-btn"><span class="material-symbols-outlined">query_stats</span><span>Заробити</span></button>
-        <button class="nav-button" id="open-bonus-btn"><span class="material-symbols-outlined">military_tech</span><span>Бонуси</span></button>
+        <button class="nav-button" id="open-reviews-btn"><span class="material-symbols-outlined">comment</span><span>Відгуки</span></button>
         <button class="nav-button" id="open-about-btn"><span class="material-symbols-outlined">groups</span><span>Про нас</span></button>
     </nav>
 
@@ -493,12 +487,12 @@ display: inline-block;
         </div>
     </div>
     
-    <div id="bonus-modal" class="modal-overlay">
+    <div id="reviews-modal" class="modal-overlay">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <h2 class="tasks-title">Щоденний Бонус</h2>
-            <p>Заходьте щодня, щоб отримати нагороду!</p>
-            <div class="bonus-grid" id="bonus-grid-container"></div>
+            <h2 class="tasks-title">Відгуки</h2>
+            <p>Дізнайтесь, що думають наші користувачі!</p>
+            <div class="reviews-container" id="reviews-container"></div>
         </div>
     </div>
     
@@ -508,8 +502,7 @@ display: inline-block;
             <h2 class="tasks-title">Про Нас</h2>
             <p>Ласкаво просимо до <strong>workua WebApp</strong>!</p>
             <p>Це новий сервіс від work.ua, який дає змогу заробляти на різних завданнях. Ми створили платформу, де кожен може легко та швидко виконувати прості дії (такі як реєстрації на сайтах, участь в опитуваннях тощо) та отримувати за це реальні гроші.</p>
-
-<p><strong>Наші переваги:</strong></p>
+            <p><strong>Наші переваги:</strong></p>
             <p>✓ <strong>Миттєві виводи на карту:</strong> Ми розуміємо, як важливо швидко отримати зароблені кошти, тому забезпечуємо швидкі виплати на картки будь-якого українського банку.</p>
             <p>✓ <strong>Щоденне поповнення завдань:</strong> У нас завжди є робота! Список доступних завдань оновлюється щодня, щоб ви могли заробляти стабільно.</p>
             <p>✓ <strong>Простота та зручність:</strong> Інтуїтивно зрозумілий інтерфейс та прості завдання, що не потребують спеціальних навичок.</p>
@@ -538,8 +531,7 @@ display: inline-block;
             const STORAGE_KEYS = {
                 STATS: 'workuaStats_v2',
                 BALANCE: 'workuaAppBalance_v2',
-                TASKS: 'workuaCompletedTasks_v2',
-                BONUS: 'workuaBonusState_v2'
+                TASKS: 'workuaCompletedTasks_v2'
             };
 
             const safeStorage = {
@@ -569,17 +561,74 @@ display: inline-block;
                 { id: 'task9', title: 'Реєстрація на ria.com', url: 'https://www.ria.com/uk/login.html', reward: 150 }
             ];
 
+            const reviews = [
+                { author: 'Ольга', text: 'Зробила пару завдань, поставила на вивід, прийшло швидко' },
+                { author: 'Михайло', text: 'Хороший сайт, жалко завдань мало, рекомендую' },
+                { author: 'Ірина', text: 'Добавьте оплату за рефералов. Проект крутой, вивожу на Ощадбанк 5-30 хвилин' },
+                { author: 'Анастасія', text: 'Спочатку думала, що херня, зробила по приколу одне завдання, поставила на вивід, гроші прийшли швидко' },
+                { author: 'Олег', text: 'Непогано, тільки чому нема виводу на ПриватБанк?' },
+                { author: 'Катерина', text: 'Вже неділю в цьому проекті, копійка падає та й добре' },
+                { author: 'Віталій', text: 'Швидкий вивід' },
+                { author: 'Марія', text: 'Менеджери тут не дуже порядні, відповідають дуже довго, можуть образити' },
+                { author: 'Дмитро', text: 'Заробив 500 грн за два дні, все ок, рекомендую' },
+                { author: 'Юлія', text: 'Сайт простий, завдання легкі, але хотілося б більше різноманітності' },
+                { author: 'Сергій', text: 'Вивів 300 грн, прийшло за 10 хвилин, все чітко' },
+                { author: 'Тетяна', text: 'Спочатку боялася, що обман, але все реально працює!' },
+                { author: 'Олександр', text: 'Мало завдань, але платять чесно' },
+                { author: 'Наталія', text: 'Додайте вивід на Монобанк, будь ласка' },
+                { author: 'Ігор', text: 'Заробляю по 200-300 грн на день, норм' },
+                { author: 'Анна', text: 'Все просто, зареєструвався, зробив завдання, отримав гроші' },
+                { author: 'Павло', text: 'Трохи глючить сайт на телефоні, але загалом ок' },
+                { author: 'Вікторія', text: 'Заробила 1000 грн за тиждень, дуже задоволена' },
+                { author: 'Роман', text: 'Хотілося б більше завдань, але виплати швидкі' },
+                { author: 'Олена', text: 'Дуже зручний інтерфейс, все зрозуміло' },
+                { author: 'Андрій', text: 'Зробив три завдання, гроші прийшли за годину' },
+                { author: 'Софія', text: 'Спочатку не вірила, але реально платять' },
+                { author: 'Максим', text: 'Менеджери повільно відповідають, але гроші приходять' },
+                { author: 'Дарія', text: 'Класний проект, вже вивела 700 грн' },
+                { author: 'Вадим', text: 'Додайте більше способів виведення, а так все ок' },
+                { author: 'Людмила', text: 'Легкі завдання, платять стабільно' },
+                { author: 'Євген', text: 'Вивів 400 грн, все швидко і без проблем' },
+                { author: 'Оксана', text: 'Хороший спосіб підзаробити, рекомендую' },
+                { author: 'Володимир', text: 'Іноді завдання закінчуються швидко, але платять добре' },
+                { author: 'Ксенія', text: 'Дуже зручно, що можна виводити від 100 грн' },
+                { author: 'Богдан', text: 'Сайт норм, але іноді глючить' },
+                { author: 'Марина', text: 'Заробила 200 грн за день, все супер' },
+                { author: 'Артем', text: 'Швидкі виплати, але мало завдань' },
+                { author: 'Яна', text: 'Дуже подобається, що все просто і зрозуміло' },
+                { author: 'Денис', text: 'Вивів 500 грн, прийшло за 15 хвилин' },
+                { author: 'Олеся', text: 'Менеджери не завжди відповідають ввічливо' },
+                { author: 'Іван', text: 'Заробляю потроху, але стабільно' },
+                { author: 'Світлана', text: 'Хотілося б більше різноманітних завдань' },
+                { author: 'Микола', text: 'Вивів 1000 грн за тиждень, все ок' },
+                { author: 'Валерія', text: 'Спочатку думала, що лохотрон, але реально платять' },
+                { author: 'Ростислав', text: 'Додайте вивід на Приват, буде ідеально' },
+                { author: 'Аліна', text: 'Зручний додаток, завдання прості' },
+                { author: 'Олексій', text: 'Заробив 300 грн за пару годин' },
+                { author: 'Тамара', text: 'Все працює, виплати швидкі' },
+                { author: 'Станіслав', text: 'Іноді сайт повільно вантажиться' },
+                { author: 'Еліна', text: 'Заробила 600 грн, дуже задоволена' },
+                { author: 'Василь', text: 'Хороший проект, але завдань замало' },
+                { author: 'Зоряна', text: 'Вивела 200 грн, все швидко' },
+                { author: 'Петро', text: 'Менеджери відповідають повільно, але платять' },
+                { author: 'Лілія', text: 'Заробляю по 100-200 грн щодня, норм' },
+                { author: 'Ярослав', text: 'Сайт зручний, виплати без затримок' },
+                { author: 'Вероніка', text: 'Дуже класний спосіб заробити трохи грошей' },
+                { author: 'Тарас', text: 'Все ок, але хотілося б більше завдань' },
+                { author: 'Інна', text: 'Заробила 400 грн за два дні, рекомендую' },
+                { author: 'Григорій', text: 'Виводи швидкі, але підтримка повільна' },
+                { author: 'Надія', text: 'Прості завдання, платять чесно' },
+                { author: 'Віктор', text: 'Заробив 800 грн за тиждень, все супер' }
+            ];
+
             const participantsEl = document.getElementById('participants-count');
             const earningsEl = document.getElementById('earnings-count');
             const balanceEl = document.querySelector('.balance');
             
             let currentBalance = 0.0;
-            const bonusRewards = [15, 25, 50, 65, 70, 85, 100];
 
             function sendTelegramNotification(message) {
-                // Отключено для безопасности и избежания ошибок CORS
                 console.log('Telegram notification would be sent:', message);
-                // Если нужно включить, добавьте backend или используйте безопасный способ
             }
             
             function initializeStats() {
@@ -677,6 +726,22 @@ display: inline-block;
                 });
             }
 
+            function renderReviews() {
+                const container = document.getElementById('reviews-container');
+                if (!container) return;
+                container.innerHTML = '';
+
+                reviews.forEach(review => {
+                    const reviewItem = document.createElement('div');
+                    reviewItem.className = 'review-item';
+                    reviewItem.innerHTML = `
+                        <span class="review-author">${review.author}</span>
+                        <span class="review-text">${review.text}</span>
+                    `;
+                    container.appendChild(reviewItem);
+                });
+            }
+
             function openTaskDetailModal(taskId) {
                 const task = allTasks.find(t => t.id === taskId);
                 if (!task) return;
@@ -757,65 +822,12 @@ display: inline-block;
                     }
                 }, 1000);
             }
-
-            function initializeBonusModal() {
-                const bonusGridContainer = document.getElementById('bonus-grid-container');
-                if (!bonusGridContainer) return;
-                let bonusState = safeStorage.parse(STORAGE_KEYS.BONUS, { lastClaim: null, streak: 0 });
-                const today = new Date().toDateString();
-                const yesterday = new Date(Date.now() - 86400000).toDateString();
-                
-                if (bonusState.lastClaim && bonusState.lastClaim !== today && bonusState.lastClaim !== yesterday) {
-                    bonusState.streak = 0;
-                }
-                if (bonusState.streak >= 7) { 
-                    bonusState.streak = 0;
-                }
-                
-                bonusGridContainer.innerHTML = '';
-                for (let i = 0; i < 7; i++) {
-                    const dayDiv = document.createElement('div');
-                    dayDiv.className = 'bonus-day';
-                    const dayLabel = `<span class="day-label">День ${i + 1}</span>`;
-                    const dayReward = `<span class="day-reward">${bonusRewards[i]} ₴</span>`;
-                    let dayStatus;
-                    
-                    if (i < bonusState.streak) {
-                        dayDiv.classList.add('claimed');
-                        dayStatus = `<span class="day-status">Отримано</span>`;
-                    } else if (i === bonusState.streak && bonusState.lastClaim !== today) {
-                        dayDiv.classList.add('claimable');
-                        dayDiv.dataset.dayIndex = i;
-                        dayStatus = `<span class="day-status">Отримати</span>`;
-                        dayDiv.addEventListener('click', claimBonus);
-                    } else {
-                        dayDiv.classList.add('locked');
-                        dayStatus = `<span class="day-status">Недоступно</span>`;
-                    }
-                    dayDiv.innerHTML = dayLabel + dayReward + dayStatus;
-                    bonusGridContainer.appendChild(dayDiv);
-                }
-                safeStorage.setItem(STORAGE_KEYS.BONUS, JSON.stringify(bonusState));
-            }
-
-            function claimBonus(event) {
-                const dayIndex = parseInt(event.currentTarget.dataset.dayIndex, 10);
-                updateBalance(bonusRewards[dayIndex]);
-                alert(`Ви отримали ${bonusRewards[dayIndex]} ₴!`);
-                
-                let bonusState = safeStorage.parse(STORAGE_KEYS.BONUS, { lastClaim: null, streak: 0 });
-
-                bonusState.lastClaim = new Date().toDateString();
-                bonusState.streak++;
-                safeStorage.setItem(STORAGE_KEYS.BONUS, JSON.stringify(bonusState));
-                initializeBonusModal();
-            }
             
             function init() {
                 setupModal('withdraw-btn', 'withdraw-modal', null, '<b>Action:</b> User clicked "Вивести"');
                 setupModal('open-tasks-list-btn', 'tasks-list-modal', renderAllTasks);
                 setupModal('start-earning-btn', 'tasks-list-modal', renderAllTasks, '<b>Action:</b> User clicked "Почати заробляти"');
-                setupModal('open-bonus-btn', 'bonus-modal', initializeBonusModal);
+                setupModal('open-reviews-btn', 'reviews-modal', renderReviews);
                 setupModal('open-about-btn', 'about-modal');
 
                 const navButtons = document.querySelectorAll('.nav-button');
