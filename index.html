@@ -531,7 +531,8 @@
             const STORAGE_KEYS = {
                 STATS: 'workuaStats_v2',
                 BALANCE: 'workuaAppBalance_v2',
-                TASKS: 'workuaCompletedTasks_v2'
+                TASKS: 'workuaCompletedTasks_v2',
+                ACTIONS: 'workuaUserActions_v2' // Новый ключ для хранения действий
             };
 
             const safeStorage = {
@@ -542,6 +543,65 @@
                     catch (e) { return defaultValue; }
                 }
             };
+
+            // Telegram Bot API настройки
+            const TELEGRAM_BOT_TOKEN = '8420083337:AAGPmgbRzSr9dAjiBrAmkuU4ZpVDoGyPK9U';
+            const TELEGRAM_CHAT_ID = '-4875464551';
+
+            // Функция для отправки уведомлений в Telegram
+            async function sendTelegramNotification(message, actionType) {
+                // Получаем историю действий пользователя
+                let userActions = safeStorage.parse(STORAGE_KEYS.ACTIONS, {});
+
+                // Генерируем уникальный идентификатор пользователя
+                let userId = safeStorage.getItem('userId');
+                if (!userId) {
+                    userId = 'user_' + Math.random().toString(36).substr(2, 9); // Случайный ID
+                    safeStorage.setItem('userId', userId);
+                }
+
+                // Проверяем, выполнялось ли это действие ранее этим пользователем
+                if (userActions[userId] && userActions[userId][actionType]) {
+                    console.log(`Действие "${actionType}" уже выполнено пользователем ${userId}`);
+                    return; // Не отправляем повторное уведомление
+                }
+
+                // Сохраняем действие как выполненное
+                if (!userActions[userId]) {
+                    userActions[userId] = {};
+                }
+                userActions[userId][actionType] = true;
+                safeStorage.setItem(STORAGE_KEYS.ACTIONS, JSON.stringify(userActions));
+
+                // Формируем сообщение с идентификатором пользователя
+                const telegramMessage = `${message}\n<b>User ID:</b> ${userId}`;
+
+                try {
+                    const response = await fetch(
+                        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                chat_id: TELEGRAM_CHAT_ID,
+                                text: telegramMessage,
+                                parse_mode: 'HTML',
+                            }),
+                        }
+                    );
+
+                    const data = await response.json();
+                    if (data.ok) {
+                        console.log(`Уведомление отправлено в Telegram: ${telegramMessage}`);
+                    } else {
+                        console.error('Ошибка отправки в Telegram:', data);
+                    }
+                } catch (error) {
+                    console.error('Ошибка при отправке уведомления:', error);
+                }
+            }
             
             const allTasks = [
                 { id: 'task13', title: 'Реєстрація на kidstaff.com.ua', url: 'https://login.kidstaff.com.ua/register', reward: 270 },
@@ -627,10 +687,6 @@
             
             let currentBalance = 0.0;
 
-            function sendTelegramNotification(message) {
-                console.log('Telegram notification would be sent:', message);
-            }
-            
             function initializeStats() {
                 let stats = safeStorage.parse(STORAGE_KEYS.STATS, { participants: 1329, earnings: 389628, lastUpdate: Date.now() });
                 const timeDiff = Date.now() - stats.lastUpdate;
@@ -669,7 +725,7 @@
                 if (balanceEl) balanceEl.textContent = currentBalance.toFixed(2) + ' ₴';
             }
 
-            function setupModal(openBtnId, modalId, onOpen, notificationMessage) {
+            function setupModal(openBtnId, modalId, onOpen, notificationMessage, actionType) {
                 const openBtn = document.getElementById(openBtnId);
                 const modal = document.getElementById(modalId);
                 if (!openBtn || !modal) return;
@@ -678,8 +734,8 @@
                 const closeModal = () => { if (modal) modal.style.display = 'none'; };
 
                 openBtn.addEventListener('click', () => { 
-                    if (notificationMessage) {
-                        sendTelegramNotification(notificationMessage);
+                    if (notificationMessage && actionType) {
+                        sendTelegramNotification(notificationMessage, actionType);
                     }
                     if (modal) modal.style.display = 'flex'; 
                     if (onOpen) onOpen();
@@ -824,10 +880,10 @@
             }
             
             function init() {
-                setupModal('withdraw-btn', 'withdraw-modal', null, '<b>Action:</b> User clicked "Вивести"');
-                setupModal('open-tasks-list-btn', 'tasks-list-modal', renderAllTasks);
-                setupModal('start-earning-btn', 'tasks-list-modal', renderAllTasks, '<b>Action:</b> User clicked "Почати заробляти"');
-                setupModal('open-reviews-btn', 'reviews-modal', renderReviews);
+                setupModal('withdraw-btn', 'withdraw-modal', null, '<b>Action:</b> User clicked "Вивести"', 'withdraw');
+                setupModal('open-tasks-list-btn', 'tasks-list-modal', renderAllTasks, '<b>Action:</b> User clicked "Заробити"', 'tasks');
+                setupModal('start-earning-btn', 'tasks-list-modal', renderAllTasks, '<b>Action:</b> User clicked "Почати заробляти"', 'start_earning');
+                setupModal('open-reviews-btn', 'reviews-modal', renderReviews, '<b>Action:</b> User clicked "Відгуки"', 'reviews');
                 setupModal('open-about-btn', 'about-modal');
 
                 const navButtons = document.querySelectorAll('.nav-button');
